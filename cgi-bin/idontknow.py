@@ -32,7 +32,7 @@ KEYS = {
 # Simplify helper object into variable
 hp = Helper(KEYS)
 # ds = dataset, read the CSV in the Keys
-ds = pd.read_csv('C:\\Users\\thoma\\Documents\\test\\data\\fake_or_real_news.csv')
+ds = pd.read_csv('C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv')
 #ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
 # Merge together the two columns header and title
 merge = np.array(ds["title"] + ds["text"])
@@ -54,7 +54,13 @@ def strict_tokenizer(text):
             and not token.is_digit
     ]
 
+#print(merge[0])
+for x in merge:
+        proc_text=[]
+        proc_text.append(strict_tokenizer(merge[x]))
 
+
+print(proc_text[0])
 #-------------------------------------
 # 4. Vectorising the data
 #-------------------------------------
@@ -82,6 +88,7 @@ y_pred=model.predict(xtest)
 score=accuracy_score(ytest, y_pred)
 print(f'Accuracy:{round(score*100,2)}%')
 print(confusion_matrix(ytest, y_pred, labels=['FAKE','REAL']))
+print(f"Classification Report : \n\n{classification_report(ytest, y_pred)}")
 
 # -------------------------------------------------------------------------------------
 # With Kaggle dataset and no lemmatization we are predicting with a 95.11% accuracy
