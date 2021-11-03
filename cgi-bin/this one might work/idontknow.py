@@ -18,9 +18,6 @@ from ml_helper.helper import Helper
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report, confusion_matrix
 import pickle
-import string
-string.punctuation
-
 
 KEYS = {
     "SEED": 1,
@@ -38,7 +35,7 @@ hp = Helper(KEYS)
 ds = pd.read_csv('C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv')
 #ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
 # Merge together the two columns header and title
-ds["merge"] = np.array(ds["title"] + ds["text"])
+merge = np.array(ds["title"] + ds["text"])
 # Create a label variable which is all of the labels in the dataset fake or real
 label= np.array(ds["label"])
 
@@ -46,70 +43,24 @@ label= np.array(ds["label"])
 # PRE-PROCESS OR IMPORT DEF
 #-------------------------------------
 
-def rem_punc(text):
-    # Iterate through array and return text if not included in punctuation list
-    rem="".join([i for i in text if i not in string.punctuation])
-    return rem
-ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(x))
-
-# ----------------------------------------------------------
-# Try with and without lowering the text 
-# ----------------------------------------------------------
-
-ds["lower"]=ds['new_merge'].apply(lambda x: x.lower())
-
-
-# Tokenize by splitting words into sentences
-def tokenization(text):
-        tokens = ''.join(text).split()
-        return tokens
-#applying function to the column
-ds['tokenized']= ds['lower'].apply(lambda x: tokenization(x))
-
-
-import nltk
-#Stop words present in the library
-stopwords = nltk.corpus.stopwords.words('english')
-
-# Remove stop words from tokenized text
-def remove_stopwords(text):
-    output= [i for i in text if i not in stopwords]
-    return output
-#applying the function
-ds['no_stopwords']= ds['tokenized'].apply(lambda x:remove_stopwords(x))
-
-# Lemmatization Sequence
-from nltk.stem import WordNetLemmatizer
-#nltk.download('wordnet')
-word_lemmatizer = WordNetLemmatizer()
-
-def lemmatizer(text):
-    # Lemmatizes each word in text according to the library/corpus we have imported from nltk
-    lemmed = [word_lemmatizer.lemmatize(word) for word in text]
-    return lemmed
-
-ds['lemma']=ds['no_stopwords'].apply(lambda x:lemmatizer(x))
-
-#print(ds.head())
-
-def make_str(list):
-    str=' '.join(list)
-    return str
-
-preprocessed = []
-#preprocessed=preprocessed.apply(lambda x:make_str(x))
-#preprocessed.append(' '.join(make_str(row) for row in ds['lemma']))
-for x in ds['lemma']:
-    preprocessed.append(''.join(make_str(x)))
-#print(preprocessed)
+# Need to figure out how to use this
+def strict_tokenizer(text):
+    # Had to download en_core_web_sm for this to work
+    nlp = sp.load("en_core_web_sm", disable=["parser", "ner", "textcat"])
+    return [token.lemma_.lower().strip() + token.pos_ for token in nlp(text)
+        if 
+            not token.is_stop and not nlp.vocab[token.lemma_].is_stop
+            and not token.is_punct
+            and not token.is_digit
+    ]
 
 #print(merge[0])
-#for x in merge:
-       # proc_text=[]
-        #proc_text.append(strict_tokenizer(merge[x]))
+for x in merge:
+        proc_text=[]
+        proc_text.append(strict_tokenizer(merge[x]))
 
 
-#print(proc_text[0])
+print(proc_text[0])
 #-------------------------------------
 # 4. Vectorising the data
 #-------------------------------------
@@ -117,7 +68,7 @@ for x in ds['lemma']:
 cv = CountVectorizer()
 # Learn the vocabulary dictionary and return document-term matrix, only do it to text and not label classifier
 # All the text columns are now floats
-x = cv.fit_transform(preprocessed)
+x = cv.fit_transform(merge)
 tfidf = TfidfTransformer()
 x = tfidf.fit_transform(x)
 
