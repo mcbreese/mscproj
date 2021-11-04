@@ -17,6 +17,7 @@ from sklearn.linear_model import PassiveAggressiveClassifier
 from ml_helper.helper import Helper
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report, confusion_matrix
+from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
 import pickle
 import string
 string.punctuation
@@ -46,10 +47,6 @@ label= np.array(ds["label"])
 # PRE-PROCESS OR IMPORT DEF
 #-------------------------------------
 
-def rem_punc(text):
-    # Iterate through array and return text if not included in punctuation list
-    rem="".join([i for i in text if i not in string.punctuation])
-    return rem
 ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(x))
 
 # ----------------------------------------------------------
@@ -59,42 +56,16 @@ ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(x))
 ds["lower"]=ds['new_merge'].apply(lambda x: x.lower())
 
 
-# Tokenize by splitting words into sentences
-def tokenization(text):
-        tokens = ''.join(text).split()
-        return tokens
 #applying function to the column
 ds['tokenized']= ds['lower'].apply(lambda x: tokenization(x))
 
 
-import nltk
-#Stop words present in the library
-stopwords = nltk.corpus.stopwords.words('english')
 
-# Remove stop words from tokenized text
-def remove_stopwords(text):
-    output= [i for i in text if i not in stopwords]
-    return output
 #applying the function
 ds['no_stopwords']= ds['tokenized'].apply(lambda x:remove_stopwords(x))
 
-# Lemmatization Sequence
-from nltk.stem import WordNetLemmatizer
-#nltk.download('wordnet')
-word_lemmatizer = WordNetLemmatizer()
-
-def lemmatizer(text):
-    # Lemmatizes each word in text according to the library/corpus we have imported from nltk
-    lemmed = [word_lemmatizer.lemmatize(word) for word in text]
-    return lemmed
-
 ds['lemma']=ds['no_stopwords'].apply(lambda x:lemmatizer(x))
 
-#print(ds.head())
-
-def make_str(list):
-    str=' '.join(list)
-    return str
 
 preprocessed = []
 #preprocessed=preprocessed.apply(lambda x:make_str(x))
