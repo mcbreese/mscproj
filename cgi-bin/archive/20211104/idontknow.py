@@ -86,26 +86,9 @@ for x in ds['lemma']:
 cv = CountVectorizer()
 # Learn the vocabulary dictionary and return document-term matrix, only do it to text and not label classifier
 # All the text columns are now floats
-# Fit_transform returns the matrix
-#x = cv.fit_transform(preprocessed)
-
-x=cv.fit_transform(preprocessed)
-# Exporting Z as it is the vectorizer
-z=cv.fit(preprocessed)
-
-print ("Vectorizer trained. Saving vectorizer to cv.pickle")
-with open("cv.pickle", "wb") as file:
-    pickle.dump(z, file)
-print('Vectorizer saved')
-
+x = cv.fit_transform(preprocessed)
 tfidf = TfidfTransformer()
-z = tfidf.fit(x)
 x = tfidf.fit_transform(x)
-print ("TFIDF trained. Saving vectorizer tfidf.pickle")
-with open("tfidf.pickle", "wb") as file:
-    pickle.dump(z, file)
-print('TFIDF saved')
-
 
 
 # Create a train and test ds variables, the test size is 20% and train 80%, randomise using the seed but is constant to make it reproducible
@@ -130,11 +113,10 @@ print(f"Classification Report : \n\n{classification_report(ytest, y_pred)}")
 # -------------------------------------------------------------------------------------
 
 
-print ("Model trained. Saving model to model.pickle")
+#print ("Model trained. Saving model to model.pickle")
 with open("idk.pickle", "wb") as file:
     pickle.dump(model, file)
 print('Model saved')
-
 
 # Call the vectorizer function from main.py, only works when cv has been used in training
 # Need to vectorize seperately without running the whole script really

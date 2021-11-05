@@ -5,7 +5,7 @@ import pickle
 # --------------------------------
 # Below breaks script bc of opening csv file script is run on import
 # --------------------------------
-from vect import vectorize_page
+from idontknow import vectorize_page
 # Scrapes page text
 from test import return_text
 from topics import top_words
@@ -18,10 +18,10 @@ form = cgi.FieldStorage()
 # Get data from fields
 url = form.getvalue('url')
 #Real
-url='https://www.theguardian.com/environment/2021/oct/28/world-failing-make-changes-avoid-climate-breakdown-report'
+#url='https://www.theguardian.com/environment/2021/oct/28/world-failing-make-changes-avoid-climate-breakdown-report'
 #Fake 
 #url='https://www.theburningplatform.com/2021/10/11/the-vaccine-mandate-is-a-hoax/'
-#url='https://heatworld.com/celebrity/news/molly-mae-apartment-tour/'
+url='https://heatworld.com/celebrity/news/molly-mae-apartment-tour/'
 #url='https://solarsystem.nasa.gov/solar-system/sun/overview/'
 #url ='https://www.infowars.com/posts/marketing-executive-fired-for-being-white-wins-10-million-discrimination-suit/'
 print('Python URL below')
@@ -44,7 +44,7 @@ page_text=make_str(page_text)
 data = vectorize_page(page_text)
 
 #print(topics)
-#print(data)
+print(data)
 #Open our saved model in the .pickle file
 # --------------------------------
 # Below just needed explicit file path in order to work
