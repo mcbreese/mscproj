@@ -1,13 +1,10 @@
 
-# Scrapes page text
-from test import return_text
-# from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
+# Spacy required for pre-processing
 import spacy as sp
+# Require counter to modify our list of words
 from collections import Counter
 from string import punctuation
 
-# Example URL just to test this page, need to import from main.py
-url='https://heatworld.com/celebrity/news/molly-mae-apartment-tour/'
 # Load large English corpus to recognise more words
 nlp = sp.load("en_core_web_lg")
 
@@ -18,16 +15,16 @@ def top_words(text):
     # Initialise the final list which will be our output to return to the web plugin
     topten=[]
     # NLP Corpus tags words e.g. adjective or pronoun, only want the following
-    pos_tag = ['PROPN', 'ADJ', 'NOUN', 'VERB']
+    tag = ['PROPN', 'ADJ', 'NOUN', 'VERB']
     # Analyse text using nlp function and lower the input
     doc = nlp(text.lower()) 
-    for token in doc: 
+    for word in doc: 
         # If a stop word or the token is punctiation then continue/do nothing
-        if(token.text in nlp.Defaults.stop_words or token.text in punctuation):
+        if(word.text in nlp.Defaults.stop_words or word.text in punctuation):
             continue 
         # Otherwise append to the array we previously initalised
-        if(token.pos_ in pos_tag):
-            words.append(token.text)
+        if(word.pos_ in tag):
+            words.append(word.text)
     # Create a Counter object, this will convert the list into a dict of words and the # of occurences
     words = Counter(words)
     # Most common returns the top n from our Counter
@@ -35,7 +32,3 @@ def top_words(text):
         # print (word, count)
         topten.append([word,count])
     return topten
-
-# This will be the scraped text below
-# page_text=return_text(url)
-# page_text=top_words(page_text)

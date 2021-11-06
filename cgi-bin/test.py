@@ -1,45 +1,43 @@
-#!/usr/bin/env python3
-# ^ Require the above to point to Python.exe - LEAVE IT IN
+# Use to access the csv dataset
+import pandas as pd
+# Use to access the data in the csv as arrays
+import numpy as np
+# Need to vectorize text from the dataset as algorithm only accepts numerical input
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+# Need to train and test model
+from sklearn.model_selection import train_test_split
+# The training models
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import PassiveAggressiveClassifier
+from ml_helper.helper import Helper
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix
+from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
+import pickle
+import string
+string.punctuation
 
+# Save some values in this KEYS object and refer to them leaving only one location to change
+KEYS = {
+    "SEED": 1,
+    #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv",
+    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\politifact.csv",
+    "TARGET": "label",
+    "METRIC": "accuracy",
+    "TIMESERIES": False,
+    "SPLITS": 3,
+    "ITERATIONS": 500,
+}
 
-
-#import cgi
-import requests
-from bs4 import BeautifulSoup
-
-#form = cgi.FieldStorage()
-
-# Get data from fields
-#url = form.getvalue('url')
-
-
-
-# Scrape the page text
-# Use the requests library to access the webpage content
-# Use beautiful soup to identify the textual data
-
-# Use requests library to request the webpage content
-
-def return_text(url):
-        # Open the page content
-	html=requests.get(url).content
-	# Scrape using lxml tree library: https://stackabuse.com/introduction-to-the-python-lxml-library/
-	scrape=BeautifulSoup(html, 'lxml')
-	# List of textual elements obtained from here: https://flaviocopes.com/html-text-tags/
-	text_elements=['p', 'strong', 'em', 'b', 'u', 'i', 'h1', 'h2', 'h3', 'h4','h5','h6','span','q','li']
-	text_out=""
-
-        # Search through the page, if the HTML tage is listed in our above array then add it to the text_out variable
-	for i in scrape.find_all(text=True):
-		if i.parent.name in text_elements:
-			text_out+= '{} '.format(i)
-	
-	escape_sym=['\r','\n','\t','\xa0']
-
-        # Replace any of the above values in our text_out array with blank, they are escape characters
-	for e in escape_sym:
-		text_out=text_out.replace(e, '')
-	
-	return text_out
-
-
+#-------------------------------------
+# 1. Open the dataset
+#-------------------------------------
+# Simplify helper object into variable
+hp = Helper(KEYS)
+# ds = dataset, read the CSV in the Keys
+ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
+# Merge together the two columns header and title to have a fuller text
+ds["merge"] = np.array(str(ds["title"]) + str(ds["text"]))
+# Create a label variable which is all of the labels in the dataset fake or real
+label= np.array(ds["label"])
+print(ds["label"].value_counts())
