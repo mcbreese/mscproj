@@ -21,7 +21,7 @@ string.punctuation
 KEYS = {
     "SEED": 1,
     #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv",
-    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\politifact.csv",
+    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\snopes.csv",
     "TARGET": "label",
     "METRIC": "accuracy",
     "TIMESERIES": False,

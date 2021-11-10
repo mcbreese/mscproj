@@ -1,0 +1,1 @@
+Snopes.CSV is some Snopes, Some Politifact and some Kaggle

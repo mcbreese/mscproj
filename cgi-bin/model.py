@@ -20,8 +20,9 @@ string.punctuation
 # Save some values in this KEYS object and refer to them leaving only one location to change
 KEYS = {
     "SEED": 1,
-    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv",
+    #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv",
     #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\politifact.csv",
+    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\snopes.csv",
     "TARGET": "label",
     "METRIC": "accuracy",
     "TIMESERIES": False,
@@ -46,16 +47,16 @@ label= np.array(ds["label"])
 #-------------------------------------
 
 # First remove punctuation from dataset, imported from external module
-ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(x))
+ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(str(x)))
 
 # ----------------------------------------------------------
 # Try with and without lowering the text 
 # ----------------------------------------------------------
 
 # Lower the text in the dataset
-ds["lower"]=ds['new_merge'].apply(lambda x: x.lower())
+#ds["lower"]=ds['new_merge'].apply(lambda x: x.lower())
 # Tokenize the text so each word can be iterated through and modified if necessary
-ds['tokenized']= ds['lower'].apply(lambda x: tokenization(x))
+ds['tokenized']= ds['new_merge'].apply(lambda x: tokenization(x))
 # Remove the stopwords
 ds['no_stopwords']= ds['tokenized'].apply(lambda x:remove_stopwords(x))
 # Lemmatize the text which is the process of grouping similar words together as a single form, building, builds build = build

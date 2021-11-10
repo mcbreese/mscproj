@@ -26,10 +26,10 @@ url = form.getvalue('url')
 # Testing URLs
 # ---------------------------------------------------------------------------------------------------------
 #Real
-#url='https://www.theguardian.com/environment/2021/oct/28/world-failing-make-changes-avoid-climate-breakdown-report'
+url='https://www.theguardian.com/environment/2021/oct/28/world-failing-make-changes-avoid-climate-breakdown-report'
 #Fake 
 #url='https://www.theburningplatform.com/2021/10/11/the-vaccine-mandate-is-a-hoax/'
-#surl='https://heatworld.com/celebrity/news/molly-mae-apartment-tour/'
+#url='https://heatworld.com/celebrity/news/molly-mae-apartment-tour/'
 #url='https://solarsystem.nasa.gov/solar-system/sun/overview/'
 #url ='https://www.infowars.com/posts/marketing-executive-fired-for-being-white-wins-10-million-discrimination-suit/'
 
@@ -63,5 +63,7 @@ output=model.predict(data)
 conf_score=model.decision_function(data)
 # Convert to %
 conf_score=sigmoid(conf_score)
-print(topics)
-print(f'The model has returned {output} with a confidence of {conf_score}')
+#print(topics)
+#print(f'The model has returned {output} with a confidence of {conf_score}')
+arr=[[output[0]],[conf_score[0]],[topics]]
+print(arr)
