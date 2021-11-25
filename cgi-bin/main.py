@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # ^ Require the above to point to Python.exe - LEAVE IT IN
 
+# Require the below line to work properly with CORS (Cross Origin Request Policy) otherwise response won't send
+print("Access-Control-Allow-Origin: *")
+
 # The pickle module allows us to import and export our objects as files
 import pickle
 # vect module vectorises the extracted text from the web page the user is on so it can be tested against the model
@@ -17,6 +20,7 @@ from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, mak
 
 # This print line is required otherwise it won't return properly to the JS
 print("Content-Type: text/html\n\r\n")
+
 form = cgi.FieldStorage()
 # Get data from fields
 
@@ -29,9 +33,6 @@ url = form.getvalue('url')
 #url='https://www.theguardian.com/environment/2021/oct/28/world-failing-make-changes-avoid-climate-breakdown-report'
 #Fake 
 #url='https://www.theburningplatform.com/2021/10/11/the-vaccine-mandate-is-a-hoax/'
-#url='https://heatworld.com/celebrity/news/molly-mae-apartment-tour/'
-#url='https://solarsystem.nasa.gov/solar-system/sun/overview/'
-#url ='https://www.infowars.com/posts/marketing-executive-fired-for-being-white-wins-10-million-discrimination-suit/'
 
 # Use return text function which is saved in scrape.py
 try:
@@ -68,7 +69,7 @@ data = vectorize_page(page_text)
 
 # Open the trained misinformation classifier model and store in a variable
 try:
-  with open('C:\\Users\\thoma\\Documents\\test\\mscproj\\cgi-bin\\model.pickle', "rb") as file:
+  with open('C:\\misinfo-detector\\mscproj\\cgi-bin\\model.pickle', "rb") as file:
       model = pickle.load(file)
 except:
   # If the model can't be loaded then print Error Code #2
