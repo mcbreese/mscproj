@@ -7,22 +7,17 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 # Need to train and test model
 from sklearn.model_selection import train_test_split
 # The training models
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import PassiveAggressiveClassifier
-from ml_helper.helper import Helper
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report, confusion_matrix
 from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
-import pickle
 import string
 string.punctuation
 
 # Save some values in this KEYS object and refer to them leaving only one location to change
 KEYS = {
     "SEED": 1,
-    #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv",
-    #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\politifact.csv",
-    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\snopes.csv",
+    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\snopes_reduced.csv",
     "TARGET": "label",
     "METRIC": "accuracy",
     "TIMESERIES": False,
@@ -33,8 +28,6 @@ KEYS = {
 #-------------------------------------
 # 1. Open the dataset
 #-------------------------------------
-# Simplify helper object into variable
-hp = Helper(KEYS)
 # ds = dataset, read the CSV in the Keys
 ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
 # Merge together the two columns header and title to have a fuller text
@@ -78,24 +71,10 @@ cv = CountVectorizer(lowercase=False)
 
 # Fit_transform returns the matrix of the count vectorizer to the dataset, we need this to train later
 x=cv.fit_transform(preprocessed)
-# Exporting the vectorizer so it can be used externally, we don't want to transform though as thats the matrix and won't work on our input data
-export_vect=cv.fit(preprocessed)
-# Saved as pickle file so it can be imported
-print ("Vectorizer trained. Saving vectorizer to cv.pickle")
-with open("cv.pickle", "wb") as file:
-    pickle.dump(export_vect, file)
-print('Vectorizer saved')
-
 # Now we want to modify the count matrix using tf-idf
 # Using tf-idf instead of the count matrix of the tokes is to scale down the impact of tokens that occur frequently and are less informative than features that occur in a small fraction of the training set
 tfidf = TfidfTransformer()
-# Need to export as before with CV
-export_tfidf = tfidf.fit(x)
 x = tfidf.fit_transform(x)
-print ("TFIDF trained. Saving vectorizer tfidf.pickle")
-with open("tfidf.pickle", "wb") as file:
-    pickle.dump(export_tfidf, file)
-print('TFIDF saved')
 
 #-----------------------------------------------
 # 4. Split dataset to test and train the model
@@ -115,18 +94,14 @@ model.fit(xtrain, ytrain)
 y_pred=model.predict(xtest)
 # Give an accuracy score based on the other testing set and the predictions the model provided
 score=accuracy_score(ytest, y_pred)
+
+
+# Print the outputs to a file
+f = open("pac_output2.txt", "a")
 # Print output of the accuracy of the model based on how well it guess against the tests
-print(f'Accuracy:{round(score*100,2)}%')
+print(f'Accuracy:{round(score*100,2)}%', file=f)
 # The confusion matrix demonstrates the False positives and False negatives to see the degree of error
-print(confusion_matrix(ytest, y_pred, labels=['FAKE','REAL']))
+print(confusion_matrix(ytest, y_pred, labels=['REAL','FAKE']), file=f)
 # Print the precision, recall and f-score
-print(f"Classification Report : \n\n{classification_report(ytest, y_pred)}")
-
-# ---------------------------------------------------------------------------------------------------------------------
-# 5. Output the model which can be used in the main interface, this will be quicker than training the model every time
-# ---------------------------------------------------------------------------------------------------------------------
-
-print ("Model trained. Saving model to model.pickle")
-with open("model.pickle", "wb") as file:
-    pickle.dump(model, file)
-print('Model saved')
+print(f"Classification Report : \n\n{classification_report(ytest, y_pred)}", file=f)
+f.close()

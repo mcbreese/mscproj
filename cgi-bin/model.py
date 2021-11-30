@@ -37,6 +37,7 @@ KEYS = {
 hp = Helper(KEYS)
 # ds = dataset, read the CSV in the Keys
 ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
+print(ds["label"].value_counts())
 # Merge together the two columns header and title to have a fuller text
 ds["merge"] = np.array(ds["title"]+ ds["text"])
 # Create a label variable which is all of the labels in the dataset fake or real
