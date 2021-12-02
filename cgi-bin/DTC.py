@@ -47,9 +47,9 @@ ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(str(x)))
 # ----------------------------------------------------------
 
 # Lower the text in the dataset
-#ds["lower"]=ds['new_merge'].apply(lambda x: x.lower())
+ds["lower"]=ds['new_merge'].apply(lambda x: x.lower())
 # Tokenize the text so each word can be iterated through and modified if necessary
-ds['tokenized']= ds['new_merge'].apply(lambda x: tokenization(x))
+ds['tokenized']= ds['lower'].apply(lambda x: tokenization(x))
 # Remove the stopwords
 ds['no_stopwords']= ds['tokenized'].apply(lambda x:remove_stopwords(x))
 # Lemmatize the text which is the process of grouping similar words together as a single form, building, builds build = build
@@ -97,7 +97,7 @@ y_pred=model.predict(xtest)
 score=accuracy_score(ytest, y_pred)
 
 # Print the outputs to a file
-f = open("dtc_output.txt", "a")
+f = open("dtc_output_lower.txt", "a")
 # Print output of the accuracy of the model based on how well it guess against the tests
 print(f'Accuracy:{round(score*100,2)}%', file=f)
 # The confusion matrix demonstrates the False positives and False negatives to see the degree of error

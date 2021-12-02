@@ -1,49 +1,25 @@
-#!/usr/bin/env python3
-# ^ Require the above to point to Python.exe - LEAVE IT IN
-
 # The pickle module allows us to import and export our objects as files
 import pickle
 # vect module vectorises the extracted text from the web page the user is on so it can be tested against the model
 from vect import vectorize_page
-# Scrapes page text when given a URL
-from scrape import return_text
-# Topic module gets the top words to represent what the page is about - adds more detail for user
-from topics import top_words
-# CGI is required to execute this script rather than run it as a file
-import cgi
 # Numpy used in this script for sigmoid function
 import numpy as np
-import pandas as pd
 from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
 from collections import Counter
-
-# This print line is required otherwise it won't return properly to the JS
-print("Content-Type: text/html\n\r\n")
-form = cgi.FieldStorage()
-# Get data from fields
-
-url = form.getvalue('url')
-
-# ---------------------------------------------------------------------------------------------------------
-# Testing URLs
-# ---------------------------------------------------------------------------------------------------------
-
-#ds = pd.read_csv("C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake.csv", header=0, names=["url"])
-ds = pd.read_csv("C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\real.csv", header=0, names=["url"])
-url = ds["url"]
-arr=[]
-
-for i in url:
-  # Use return text function which is saved in scrape.py
-  try:
-    page_text=return_text(i)
-  except:
-    # Error code #1, no string returned from text scraping
-    print(1)
-    # Quit the program
+import os
 
 
-  # Next segment runs through the text pre-processing steps saved in preprocess.py, more lines of code running individually but makes it easier to understand 
+
+def open_txt(input):
+    with open(input) as inp:
+        data = list(inp) # or set(inp) if you really need a set
+        data="".join(str(data) for data in data)
+        evaluate(data, input)
+    
+
+def evaluate(data, input):
+  page_text=data
+    # Next segment runs through the text pre-processing steps saved in preprocess.py, more lines of code running individually but makes it easier to understand 
   try:
     page_text=rem_punc(page_text)
     page_text.lower()
@@ -66,10 +42,6 @@ for i in url:
   except:
     # If the model can't be loaded then print Error Code #2
       print(2)
-      
-  # Define a sigmoid function as the decision_function from sklearn returns values lower and greater than 0, this converts to a confidence score in % relative to the hyperplane
-  def sigmoid(x):
-    return 1/(1+np.exp(-x))
 
   # Pass through our data from the web page to our model to receive what it's classification is
   try:  
@@ -78,21 +50,46 @@ for i in url:
   except:
     # Error code 3, no model prediction
     print(3)
-    
-  # The decision function returns the confidence from the ML model of it's output
-  try:
-    conf_score=model.decision_function(data)
-    # Convert to %
-    conf_score=sigmoid(conf_score)
-  except:
-    # Error code 6, confidence score not produced
-    print(6)
-    
-
+  
+  #print(input+" "+output)
   arr.append(output)
 
+# ==============================================================
+# Evaluation of fake and real news sources
+# ==============================================================
+arr=[]
+path= "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fakeNewsDatasets\\fakeNewsDataset\\legit\\sample"
+ext='.txt'
+# Set Fake Path
+for files in os.listdir(path):
+    if files.endswith(ext):
+        open_txt(path+"\\"+files)
+        
+    else:
+        continue
+
 count=Counter(arr)
-print(arr)
-print(count)
+
+f = open("eval_output.txt", "a")
+print("Total classifications from a REAL dataset:", file=f)
+print(count, file=f)
+
+
+# Set Real Path
+arr=[]
+path= "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fakeNewsDatasets\\fakeNewsDataset\\fake\\sample"
+ext='.txt'
+# Set Fake Path
+for files in os.listdir(path):
+    if files.endswith(ext):
+        open_txt(path+"\\"+files)
+        
+    else:
+        continue
+
+count=Counter(arr)
+print("Total classifications from a FAKE dataset:", file=f)
+print(count, file=f)
+f.close()
 
 
