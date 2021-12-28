@@ -15,7 +15,7 @@ def tokenization(text):
         tokens = ''.join(text).split()
         return tokens
 
-#Stop words present in the nltk library
+# Stop words present in the nltk library
 stopwords = nltk.corpus.stopwords.words('english')
 # Remove stop words from tokenized text
 def remove_stopwords(text):

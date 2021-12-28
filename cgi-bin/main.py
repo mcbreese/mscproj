@@ -16,14 +16,14 @@ from topics import top_words
 import cgi
 # Numpy used in this script for sigmoid function
 import numpy as np
+# The below functions preprocess the textual input
 from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
 
 # This print line is required otherwise it won't return properly to the JS
 print("Content-Type: text/html\n\r\n")
 
+# Get form data which provides the url
 form = cgi.FieldStorage()
-# Get data from fields
-
 url = form.getvalue('url')
 
 # ---------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ except:
   # If the model can't be loaded then print Error Code #2
     print(2)
     quit()
-# Define a sigmoid function as the decision_function from sklearn returns values lower and greater than 0, this converts to a confidence score in % relative to the hyperplane
+# Define a sigmoid function because the decision_function from sklearn returns values lower and greater than 0, this converts to a confidence score in % relative to the hyperplane
 def sigmoid(x):
   return 1/(1+np.exp(-x))
 
@@ -95,9 +95,8 @@ except:
   # Error code 6, confidence score not produced
   print(6)
   quit()
-#print(topics)
-#print(f'The model has returned {output} with a confidence of {conf_score}')
 
+# This final section returns an array to the JavaScript program in the web extension with the necessary data
 try:
   arr=[[output[0]],[conf_score[0]],[topics]]
   print(arr)

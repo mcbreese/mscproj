@@ -1,4 +1,0 @@
-Total classifications from a REAL dataset:
-Counter({"['REAL']": 34, "['FAKE']": 16})
-Total classifications from a FAKE dataset:
-Counter({"['FAKE']": 39, "['REAL']": 11})

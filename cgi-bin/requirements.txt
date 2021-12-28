@@ -1,7 +1,6 @@
 numpy==1.20.3
 pandas==1.2.4
 sklearn==0.0
-ml-helper==0.0.23
 spacy==2.3.3
 bs4==0.0.1
 nltk==3.6.5

@@ -8,28 +8,16 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 # The training models
 from sklearn.linear_model import PassiveAggressiveClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
 import string
 string.punctuation
 
-# Save some values in this KEYS object and refer to them leaving only one location to change
-KEYS = {
-    "SEED": 1,
-    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\snopes.csv",
-    "TARGET": "label",
-    "METRIC": "accuracy",
-    "TIMESERIES": False,
-    "SPLITS": 3,
-    "ITERATIONS": 500,
-}
-
 #-------------------------------------
 # 1. Open the dataset
 #-------------------------------------
-# ds = dataset, read the CSV in the Keys
-ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
+# ds = dataset, read the CSV
+ds = pd.read_csv("C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\data.csv", header=0, names=["id", "title", "text", "label"])
 # Merge together the two columns header and title to have a fuller text
 ds["merge"] = np.array(ds["title"]+ ds["text"])
 # Create a label variable which is all of the labels in the dataset fake or real
@@ -81,15 +69,13 @@ x = tfidf.fit_transform(x)
 #-----------------------------------------------
 
 # Create a train and test ds variables, the test size is 20% and train 80%, randomise using the seed but is constant to make it reproducible
-xtrain, xtest, ytrain, ytest = train_test_split(x, label, test_size=0.20, random_state=KEYS["SEED"])
+xtrain, xtest, ytrain, ytest = train_test_split(x, label, test_size=0.20, random_state=1)
 
 # Train model using Passive Aggressive Classifier which will sort the inputs into Fake or Real
-#model = MultinomialNB()
-model = PassiveAggressiveClassifier(C = 1.0, max_iter=KEYS["ITERATIONS"], random_state=KEYS["SEED"], tol=1e-3)
-# Fit the training data to our PAC modl
+model = PassiveAggressiveClassifier(C = 1.0, max_iter=1000, random_state=1)
+# Fit the training data to our PAC model
 model.fit(xtrain, ytrain)
 
-# Used this to help: https://dataanalyticsedge.com/2019/11/26/fake-news-analysis-natural-language-processingnlp-using-python/
 # Use predicition function on the xtest set (it sorts into the classifications)
 y_pred=model.predict(xtest)
 # Give an accuracy score based on the other testing set and the predictions the model provided

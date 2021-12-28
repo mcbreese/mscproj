@@ -1,5 +1,5 @@
 
-# Spacy required for pre-processing
+# SpaCy required for pre-processing
 import spacy as sp
 # Require counter to modify our list of words
 from collections import Counter
@@ -16,7 +16,7 @@ def top_words(text):
     topten=[]
     # NLP Corpus tags words e.g. adjective or pronoun, only want the following
     tag = ['PROPN', 'ADJ', 'NOUN', 'VERB']
-    # Analyse text using nlp function and lower the input
+    # Analyse text using nlp function and lower the input, nlp identifies what type of word it is e.g. pos (adj etc)
     doc = nlp(text.lower()) 
     for word in doc: 
         # If a stop word or the token is punctiation then continue/do nothing

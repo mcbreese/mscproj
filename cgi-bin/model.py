@@ -6,37 +6,22 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 # Need to train and test model
 from sklearn.model_selection import train_test_split
-# The training models
-from sklearn.naive_bayes import MultinomialNB
+# The training algorithm
 from sklearn.linear_model import PassiveAggressiveClassifier
-from ml_helper.helper import Helper
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import classification_report, confusion_matrix
+# Require for statistical output of model performance 
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+# The below functions preprocess the dataset input
 from preprocess import rem_punc, tokenization, remove_stopwords, lemmatizer, make_str
 import pickle
 import string
 string.punctuation
 
-# Save some values in this KEYS object and refer to them leaving only one location to change
-KEYS = {
-    "SEED": 1,
-    #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\fake_or_real_news.csv",
-    #"DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\politifact.csv",
-    "DATA_PATH": "C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\snopes.csv",
-    "TARGET": "label",
-    "METRIC": "accuracy",
-    "TIMESERIES": False,
-    "SPLITS": 3,
-    "ITERATIONS": 500,
-}
-
 #-------------------------------------
 # 1. Open the dataset
 #-------------------------------------
-# Simplify helper object into variable
-hp = Helper(KEYS)
-# ds = dataset, read the CSV in the Keys
-ds = pd.read_csv(KEYS["DATA_PATH"], header=0, names=["id", "title", "text", "label"])
+
+# ds = dataset, read the CSV
+ds = pd.read_csv("C:\\Users\\thoma\\Documents\\test\\mscproj\\data\\data.csv", header=0, names=["id", "title", "text", "label"])
 print(ds["label"].value_counts())
 # Merge together the two columns header and title to have a fuller text
 ds["merge"] = np.array(ds["title"]+ ds["text"])
@@ -48,6 +33,7 @@ label= np.array(ds["label"])
 #-------------------------------------
 
 # First remove punctuation from dataset, imported from external module
+# Lambda takes any number of items in this case we apply the function to each value in the dataset (x) using lambda
 ds["new_merge"]=ds["merge"].apply(lambda x:rem_punc(str(x)))
 
 # ----------------------------------------------------------
@@ -88,7 +74,7 @@ with open("cv.pickle", "wb") as file:
 print('Vectorizer saved')
 
 # Now we want to modify the count matrix using tf-idf
-# Using tf-idf instead of the count matrix of the tokes is to scale down the impact of tokens that occur frequently and are less informative than features that occur in a small fraction of the training set
+# Using tf-idf instead of the count matrix of the tokens is to scale down the impact of tokens that occur frequently and are less informative than features that occur in a small fraction of the training set
 tfidf = TfidfTransformer()
 # Need to export as before with CV
 export_tfidf = tfidf.fit(x)
@@ -102,16 +88,16 @@ print('TFIDF saved')
 # 4. Split dataset to test and train the model
 #-----------------------------------------------
 
-# Create a train and test ds variables, the test size is 20% and train 80%, randomise using the seed but is constant to make it reproducible
-xtrain, xtest, ytrain, ytest = train_test_split(x, label, test_size=0.20, random_state=KEYS["SEED"])
+# Create a train and test ds variables, the test size is 20% and train 80%, randomise using a seed of 1 but is constant to make it reproducible
+xtrain, xtest, ytrain, ytest = train_test_split(x, label, test_size=0.20, random_state=1)
 
 # Train model using Passive Aggressive Classifier which will sort the inputs into Fake or Real
-#model = MultinomialNB()
-model = PassiveAggressiveClassifier(C = 1.0, max_iter=KEYS["ITERATIONS"], random_state=KEYS["SEED"], tol=1e-3)
+# C is the tolerance, default is 1.0 which is the step size to avoid overfitting the model with noisy data
+# Iterations default is 1000, number of passes over the training data
+model = PassiveAggressiveClassifier(C = 1.0, max_iter=1000, random_state=1)
 # Fit the training data to our PAC modl
 model.fit(xtrain, ytrain)
 
-# Used this to help: https://dataanalyticsedge.com/2019/11/26/fake-news-analysis-natural-language-processingnlp-using-python/
 # Use predicition function on the xtest set (it sorts into the classifications)
 y_pred=model.predict(xtest)
 # Give an accuracy score based on the other testing set and the predictions the model provided
