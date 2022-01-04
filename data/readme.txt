@@ -1,9 +1,3 @@
-data.CSV is some Snopes, Some Politifact and some Kaggle (justifying the Kagggle!!)
-
-
-Fake.csv is an amalgamation of fake news from datasets folder
-Real.csv is real news from Politifact/Snopes undecided yet??
-
-50 Each
-
-saved an archive of old datasets in UWE One Drive
+> fakeNewsDatasets: contains the test samples for the individual evaluation section 7.1
+> orig_datasets: contains the original datasets before they were used in data.csv
+>	Data.csv (the data used in training model.py)
